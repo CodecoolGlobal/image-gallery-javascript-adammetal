@@ -1,5 +1,6 @@
 import { UploadForm } from "./src/upload/form";
 import { createEl } from "./src/utils/createEl";
+import { initGallery, createSwiperSlide } from "./src/gallery";
 
 import "./index.css";
 
@@ -14,14 +15,14 @@ const app = document.querySelector("#app");
  *  <div><form...</div>
  * </section>
  * </div>
- */
+*/
 
-function main() {
+async function main() {
   const nav = createEl("nav");
   const mainSection = createEl("section");
   const images = createEl('div', { className: 'images' });
   const formBox1 = createEl("div", { className: "form" });
-
+  
   // Instantiation (Peldanyositas)
   const form1 = new UploadForm(
     "form1",
@@ -37,18 +38,26 @@ function main() {
       });
       const image = await response.json();
       console.log(image);
-
-      const imageEl = createEl('img', {
+      
+      const swiperWrapper = document.querySelector('.swiper-wrapper')
+      const newSwiperSlide = createSwiperSlide(image)
+      swiperWrapper.append(newSwiperSlide)
+      gallery.update()
+      
+      /* const imageEl = createEl('img', {
         src: `http://localhost:8000${image.url}`
       })
-      images.append(imageEl);
+      images.append(imageEl); */
     }
   );
-
+  
   form1.render(formBox1);
-
+  
   mainSection.append(images, formBox1);
+  
   app.append(nav, mainSection);
+  
+  const gallery = await initGallery()
 }
 
 window.onload = main;
